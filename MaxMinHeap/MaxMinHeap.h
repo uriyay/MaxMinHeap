@@ -9,10 +9,6 @@ private:
 	size_t m_size;
 	size_t m_heap_size;
 
-	bool max_should_replace(int parent_index, int child_index);
-
-	bool min_should_replace(int parent_index, int child_index);
-
 public:
 	MaxMinHeap(int *array, size_t array_size);
 
@@ -37,4 +33,4 @@ public:
 	void heapify(int i);
 };
 
-typedef bool (MaxMinHeap::*should_replace_func_t)(int parent_index, int child_index);
+typedef bool (*should_replace_func_t)(int *arr, size_t heap_size, int parent_index, int child_index);
