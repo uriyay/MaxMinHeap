@@ -1,3 +1,4 @@
+#include <iostream>
 #include <string.h>
 
 #include "MaxMinHeap.h"
@@ -63,5 +64,12 @@ void MaxMinHeap::heapify(int i)
 		m_array[to_be_replaced] = temp;
 
 		heapify(to_be_replaced);
+	}
+}
+
+void MaxMinHeap::display()
+{
+	for (int i = 0; i < m_heap_size; i++) {
+		std::cout << i << ":" << i + 1 << ": " << m_array[i] << std::endl;
 	}
 }

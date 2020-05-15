@@ -14,12 +14,14 @@ public:
 
 	//Returns the index of the left child of i, where i is an index of a vertex in the heap
 	inline int left(int i) {
-		return 2 * i;
+		//2i in 0-based world = 2(i + 1) - 1
+		return (2 * (i + 1)) - 1;
 	}
 
 	//Returns the index of the right child of i, where i is an index of a vertex in the heap
 	inline int right(int i) {
-		return (2 * i) + 1;
+		//2i + 1 in 0-based world = 2(i + 1) + 1 - 1
+		return ((2 * (i + 1)) + 1) - 1;
 	}
 
 	//Returns the index of the parent of i, where i is an index of a vertex in the heap
@@ -31,6 +33,8 @@ public:
 	void build_heap();
 
 	void heapify(int i);
+
+	void display();
 };
 
 typedef bool (*should_replace_func_t)(int *arr, size_t heap_size, int parent_index, int child_index);
