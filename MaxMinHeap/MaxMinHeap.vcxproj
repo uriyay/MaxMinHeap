@@ -20,8 +20,8 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
-    <ProjectGuid>{A80B3E9F-5C04-4547-B9B2-93012C37A5F9}</ProjectGuid>
-    <RootNamespace>MinMaxHeap</RootNamespace>
+    <ProjectGuid>{9FAD97A5-629A-4315-B91D-515C807CA18F}</ProjectGuid>
+    <RootNamespace>MaxMinHeap</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -139,10 +139,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp" />
-    <ClCompile Include="MinMaxHeap.cpp" />
+    <ClCompile Include="MaxMinHeap.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="MinMaxHeap.h" />
+    <ClInclude Include="MaxMinHeap.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,0 +1,40 @@
+#pragma once
+
+class MaxMinHeap
+{
+private:
+	//TODO: change it to allocate a dynamic size for the array
+	//		maybe by using a template
+	int *m_array;
+	size_t m_size;
+	size_t m_heap_size;
+
+	bool max_should_replace(int parent_index, int child_index);
+
+	bool min_should_replace(int parent_index, int child_index);
+
+public:
+	MaxMinHeap(int *array, size_t array_size);
+
+	//Returns the index of the left child of i, where i is an index of a vertex in the heap
+	inline int left(int i) {
+		return 2 * i;
+	}
+
+	//Returns the index of the right child of i, where i is an index of a vertex in the heap
+	inline int right(int i) {
+		return (2 * i) + 1;
+	}
+
+	//Returns the index of the parent of i, where i is an index of a vertex in the heap
+	inline int parent(int i) {
+		//round down (i/2)
+		return (int)(i / 2);
+	}
+
+	void build_heap();
+
+	void heapify(int i);
+};
+
+typedef bool (MaxMinHeap::*should_replace_func_t)(int parent_index, int child_index);
