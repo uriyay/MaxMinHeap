@@ -1,38 +1,46 @@
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <vector>
 
 #include "MaxMinHeap.h"
 
-void read_file_to_vector(char* path, std::vector<int>& array)
+bool read_file_to_vector(const char* path, std::vector<int>& array)
 {
 	std::ifstream infile(path);
-	//TODO: read file to array
+	std::string line;
+	if (!infile.is_open()) {
+		std::cout << "failed to open file '" << path << "'" << std::endl;
+		return false;
+	}
+	while (std::getline(infile, line)) {
+		if (line.length() == 0) {
+			//skip empty lines
+			continue;
+		}
+		for (int j = 0; j < line.length(); j++) {
+			char c = line[j];
+			if (!isdigit(c)) {
+				return false;
+			}
+		}
+		array.push_back(atoi(line.data()));
+	}
+	return true;
 }
 
 int main(int argc, const char* argv[])
 {
 	std::vector<int> array;
 	if (argc < 2) {
-		std::cout << "Usage: " << argv[0] << " array" << std::endl;
-		std::cout << "where array is a numbers list seperated by comma and surrounded by quotation marks" << std::endl;
+		std::cout << "Usage: " << argv[0] << " input_file" << std::endl;
+		std::cout << "where input_file containts a numbers list, each number in a line" << std::endl;
 		return 1;
 	}
 
-	//prepare the array - split argv[1] by spaces
-	std::string s_array(argv[1]);
-	size_t cur_offset = 0;
-	size_t delim_offset = -1;
-	while (cur_offset < s_array.length()) {
-		delim_offset = s_array.find(' ', cur_offset);
-		if (delim_offset == -1) {
-			delim_offset = s_array.length();
-		}
-		std::string s_num = s_array.substr(cur_offset, delim_offset - cur_offset);
-		cur_offset = delim_offset + 1;
-		if (s_num.length() > 0) {
-			array.push_back(atoi(s_num.data()));
-		}
+	if (!read_file_to_vector(argv[1], array)) {
+		std::cout << "failed to read file '" << argv[1] << "', invalid file" << std::endl;
+		return 1;
 	}
 
 	MaxMinHeap heap(array);
