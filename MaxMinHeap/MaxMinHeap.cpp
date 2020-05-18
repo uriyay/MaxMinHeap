@@ -94,3 +94,20 @@ void MaxMinHeap::display()
 		std::cout << i << ":" << i + 1 << ": " << m_array[i] << std::endl;
 	}
 }
+
+int MaxMinHeap::extract_max() {
+	//The maximum is the root of the binary tree
+	return m_array[0];
+}
+
+int MaxMinHeap::extract_min() {
+	//The minimum is the minimum between the 2 childs of root
+	int minimum = 0;
+	if (1 < m_array.size()) {
+		minimum = m_array[1];
+	}
+	if ((2 < m_array.size()) && (m_array[2] < minimum)) {
+		minimum = m_array[2];
+	}
+	return minimum;
+}

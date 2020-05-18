@@ -46,6 +46,10 @@ public:
 		return depth % 2 == 0;
 	}
 
+	int extract_max();
+
+	int extract_min();
+
 	void heapify_(int i, bool is_max_level);
 
 	void build_heap();
