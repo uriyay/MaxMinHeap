@@ -10,7 +10,6 @@ private:
 	//TODO: change it to allocate a dynamic size for the array
 	//		maybe by using a template
 	std::vector<int> m_array;
-	size_t m_size;
 	size_t m_heap_size;
 
 public:
@@ -39,17 +38,21 @@ public:
 		//log2(i) + 1
 		//translate to 1-based
 		int depth = (int)(log2((double)i + 1));
-		std::cout << "depth of " << i << " = " << depth << std::endl;
 		return depth;
 	}
+
+	inline bool is_on_max_level(int i) {
+		int depth = get_depth(i);
+		return depth % 2 == 0;
+	}
+
+	void heapify_(int i, bool is_max_level);
 
 	void build_heap();
 
 	void heapify(int i);
 
 	void display();
-
-	bool validate();
 };
 
 typedef bool (*should_replace_func_t)(std::vector<int> &arr, size_t heap_size, int parent_index, int child_index);

@@ -1,7 +1,14 @@
 #include <iostream>
+#include <fstream>
 #include <vector>
 
 #include "MaxMinHeap.h"
+
+void read_file_to_vector(char* path, std::vector<int>& array)
+{
+	std::ifstream infile(path);
+	//TODO: read file to array
+}
 
 int main(int argc, const char* argv[])
 {
@@ -31,7 +38,6 @@ int main(int argc, const char* argv[])
 	MaxMinHeap heap(array);
 	std::cout << "display:" << std::endl;
 	heap.display();
-	heap.validate();
 
 	return 0;
 }
