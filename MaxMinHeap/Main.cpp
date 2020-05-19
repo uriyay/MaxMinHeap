@@ -20,7 +20,7 @@ bool read_file_to_vector(const char* path, std::vector<int>& array)
 		}
 		for (int j = 0; j < line.length(); j++) {
 			char c = line[j];
-			if (!isdigit(c)) {
+			if ((!isdigit(c)) && ((c != '-') || (j != 0))) {
 				return false;
 			}
 		}
@@ -47,7 +47,9 @@ int main(int argc, const char* argv[])
 	std::cout << "display:" << std::endl;
 	heap.display();
 
-	std::cout << "is_valid: " << heap.is_valid() << std::endl;
+	//check the validitiy of the heap
+	//use a ternary operator to print the boolean value
+	std::cout << "is_valid: " << (heap.is_valid() ? "true" : "false") << std::endl;
 
 	std::cout << "maximum: " << heap.extract_max() << std::endl;
 	std::cout << "minimum: " << heap.extract_min() << std::endl;
