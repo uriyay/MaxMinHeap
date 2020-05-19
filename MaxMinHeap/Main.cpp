@@ -144,7 +144,7 @@ int main(int argc, const char* argv[])
 			menu_loop(heap, is_heap_built, should_exit);
 		}
 	}
-	catch (std::runtime_error & err) {
+	catch (std::exception & err) {
 		cout << "Error: " << err.what() << endl;
 	}
 

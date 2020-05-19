@@ -45,7 +45,7 @@ public:
 	//Returns the index of the parent of i, where i is an index of a vertex in the heap
 	inline int parent(int i) {
 		//round down (i/2)
-		return (int)(i / 2);
+		return (int)((i - 1) / 2);
 	}
 
 	//returns the depth of node at index i
@@ -106,4 +106,8 @@ public:
 
 	// Prints the array contained by MaxMinHeap
 	void print_as_array();
+
+	void print2DUtil(int i, int space);
+
+	void print2D();
 };

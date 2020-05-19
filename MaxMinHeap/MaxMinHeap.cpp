@@ -11,6 +11,8 @@
 	", in function " \
 	__FUNCTION__ "()")
 
+#define COUNT 10
+
 bool read_file_to_vector(const char* path, std::vector<int>& array)
 {
 	std::ifstream infile(path);
@@ -38,7 +40,7 @@ bool read_file_to_vector(const char* path, std::vector<int>& array)
 MaxMinHeap::MaxMinHeap(std::vector<int>& array) {
 	//TODO: consider using vector
 	m_array = array;
-	m_heap_size = 0;
+	m_heap_size = m_array.size();
 
 	build_heap();
 }
@@ -47,14 +49,13 @@ MaxMinHeap::MaxMinHeap(std::string &array_filepath) {
 	if (!read_file_to_vector(array_filepath.data(), m_array)) {
 		THROW(std::invalid_argument, "invalid file");
 	}
-	m_heap_size = 0;
+	m_heap_size = m_array.size();
 
 	build_heap();
 }
 
 void MaxMinHeap::build_heap()
 {
-	m_heap_size = m_array.size();
 	for (int i = (int)(m_array.size() / 2); i >= 0; i--) {
 		heapify(i);
 	}
@@ -125,11 +126,40 @@ void MaxMinHeap::heapify(int i)
 	}
 }
 
+void MaxMinHeap::print2DUtil(int i, int space)
+{
+	if (i >= m_heap_size) {
+		return;
+	}
+	// Increase distance between levels  
+	space += COUNT;
+
+	// Process right child first  
+	print2DUtil(right(i), space);
+
+	// Print current node after space  
+	// count  
+	std::cout << std::endl;
+	for (int i = COUNT; i < space; i++)
+		std::cout << " ";
+	std::cout << m_array[i] << "\n";
+
+	// Process left child  
+	print2DUtil(left(i), space);
+}
+
+// Wrapper over print2DUtil()  
+void MaxMinHeap::print2D()
+{
+	// Pass initial space count as 0  
+	print2DUtil(0, 0);
+}
+
 void MaxMinHeap::display()
 {
-	for (int i = 0; i < m_heap_size; i++) {
-		std::cout << i + 1 << ": " << m_array[i] << std::endl;
-	}
+	std::cout << "displaying the heap as a tree on the side" << std::endl;
+	//printing the tree, where each level is on a column (instead of a row)
+	print2D();
 }
 
 int MaxMinHeap::extract_max() {
@@ -140,8 +170,7 @@ int MaxMinHeap::extract_max() {
 	int max = m_array[0];
 	//delete this element by moving the maximum element out of the heap
 	std::swap(m_array[0], m_array[m_heap_size - 1]);
-	//this will allow heap_increase_key() to override this value later
-	m_array[m_heap_size - 1] = std::numeric_limits<int>::min();
+	m_array.pop_back();
 	m_heap_size--;
 	heapify(0);
 	return max;
@@ -163,8 +192,7 @@ int MaxMinHeap::extract_min() {
 	minimum = m_array[minimum_index];
 	//delete this element by moving the minimum element out of the heap
 	std::swap(m_array[minimum_index], m_array[m_heap_size - 1]);
-	//this will allow heap_increase_key() to override this value later
-	m_array[m_heap_size - 1] = std::numeric_limits<int>::min();
+	m_array.pop_back();
 	m_heap_size--;
 	heapify(0);
 	//return the minimum element
@@ -230,7 +258,7 @@ bool MaxMinHeap::is_valid() {
 
 void MaxMinHeap::sort() {
 	build_heap();
-	for (int i = m_array.size() - 1; i >= 1; i--) {
+	for (int i = m_heap_size - 1; i >= 1; i--) {
 		std::swap(m_array[0], m_array[i]);
 		m_heap_size--;
 		heapify(0);
