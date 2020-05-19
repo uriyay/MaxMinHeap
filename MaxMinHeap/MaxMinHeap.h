@@ -18,7 +18,11 @@ private:
 	bool is_valid_(int i);
 
 public:
+	MaxMinHeap() : m_heap_size(0) {}
+
 	MaxMinHeap(std::vector<int> &array);
+
+	MaxMinHeap(std::string &array_filepath);
 
 	//Returns the index of the left child of i, where i is an index of a vertex in the heap
 	inline int left(int i) {

@@ -2,12 +2,47 @@
 #include <string.h>
 #include <stdexcept>
 #include <limits>
+#include <fstream>
+#include <sstream>
 
 #include "MaxMinHeap.h"
+
+bool read_file_to_vector(const char* path, std::vector<int>& array)
+{
+	std::ifstream infile(path);
+	std::string line;
+	if (!infile.is_open()) {
+		std::cout << "failed to open file '" << path << "'" << std::endl;
+		return false;
+	}
+	while (std::getline(infile, line)) {
+		if (line.length() == 0) {
+			//skip empty lines
+			continue;
+		}
+		for (int j = 0; j < line.length(); j++) {
+			char c = line[j];
+			if ((!isdigit(c)) && ((c != '-') || (j != 0))) {
+				return false;
+			}
+		}
+		array.push_back(atoi(line.data()));
+	}
+	return true;
+}
 
 MaxMinHeap::MaxMinHeap(std::vector<int>& array) {
 	//TODO: consider using vector
 	m_array = array;
+	m_heap_size = 0;
+
+	build_heap();
+}
+
+MaxMinHeap::MaxMinHeap(std::string &array_filepath) {
+	if (!read_file_to_vector(array_filepath.data(), m_array)) {
+		throw std::invalid_argument("invalid file");
+	}
 	m_heap_size = 0;
 
 	build_heap();

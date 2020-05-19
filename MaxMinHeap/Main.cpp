@@ -1,63 +1,135 @@
 #include <iostream>
-#include <fstream>
-#include <sstream>
 #include <vector>
+#include <conio.h>
 
 #include "MaxMinHeap.h"
 
-bool read_file_to_vector(const char* path, std::vector<int>& array)
-{
-	std::ifstream infile(path);
-	std::string line;
-	if (!infile.is_open()) {
-		std::cout << "failed to open file '" << path << "'" << std::endl;
-		return false;
+using namespace std;
+
+const char separetor[] = "-----------------------------------------------------------------";
+
+const char KEY_BUILD = 'B';
+const char KEY_EXIT = 'X';
+const char KEY_HEAPIFY = 'H';
+const char KEY_INSERT = 'I';
+const char KEY_EXTRACT_MAX = 'M';
+const char KEY_EXTRACT_MIN = 'N';
+const char KEY_DELETE = 'D';
+const char KEY_DISPLAY = 'P';
+const char KEY_SORT = 'S';
+const char KEY_PRINT_ARRAY = 'A';
+
+//_getch
+void menu_loop(MaxMinHeap &heap, bool &is_heap_built, bool &should_exit) {
+	char key = 0;
+	cout << separetor << endl;
+	cout << "Menu" << endl << separetor << endl;
+	if (!is_heap_built) {
+		cout << "[" << KEY_BUILD << "] Build a heap from a file" << endl;
 	}
-	while (std::getline(infile, line)) {
-		if (line.length() == 0) {
-			//skip empty lines
-			continue;
-		}
-		for (int j = 0; j < line.length(); j++) {
-			char c = line[j];
-			if ((!isdigit(c)) && ((c != '-') || (j != 0))) {
-				return false;
-			}
-		}
-		array.push_back(atoi(line.data()));
+	else {
+		cout << "[" << KEY_DISPLAY << "] Display the heap" << endl;
+		cout << "[" << KEY_HEAPIFY << "] Heapify" << endl;
+		cout << "[" << KEY_INSERT << "] Insert an element to the heap" << endl;
+		cout << "[" << KEY_EXTRACT_MAX << "] Extract the maximal element from the heap" << endl;
+		cout << "[" << KEY_EXTRACT_MIN << "] Extract the minimal element from the heap" << endl;
+		cout << "[" << KEY_DELETE << "] Delete an element from the heap" << endl;
+		cout << "[" << KEY_SORT << "] Sort the array contained by the heap" << endl;
+		cout << "[" << KEY_PRINT_ARRAY << "] Print the array contained by the heap" << endl;
 	}
-	return true;
+	cout << "[" << KEY_EXIT << "] Exit" << endl;
+	cout << separetor << endl;
+	cout << "Press a key to continue: ";
+
+	key = toupper(_getch());
+	cout << endl;
+	switch (key) {
+	case KEY_BUILD:
+	{
+		string filepath;
+		cout << "Insert array filepath: ";
+		//read filepath from string
+		cin >> filepath;
+		heap = MaxMinHeap(filepath);
+		is_heap_built = true;
+	}
+	break;
+	case KEY_INSERT:
+	{
+		int key = 0;
+		cout << "Insert a new key to insert: ";
+		cin >> key;
+		heap.heap_insert(key);
+	}
+	break;
+	case KEY_DELETE:
+	{
+		int i = 0;
+		cout << "Insert an index to delete from the heap (1-based): ";
+		cin >> i;		
+		//translate to 0-based index
+		i--;
+		heap.heap_delete(i);
+	}
+	break;
+	case KEY_DISPLAY:
+	{
+		heap.display();
+	}
+	break;
+	case KEY_EXTRACT_MAX:
+	{
+		cout << "maximum: " << heap.extract_max() << endl;
+	}
+	break;
+	case KEY_EXTRACT_MIN:
+	{
+		cout << "minimum: " << heap.extract_min() << endl;
+	}
+	break;
+	case KEY_HEAPIFY:
+	{
+		int i = 0;
+		cout << "Insert the index to heapify from (1-based): ";
+		cin >> i;
+		//translate to 0-based
+		i--;
+		heap.heapify(i);
+	}
+	break;
+	case KEY_PRINT_ARRAY:
+	{
+		heap.print_as_array();
+	}
+	break;
+	case KEY_SORT:
+	{
+		cout << "sorting the array:" << endl;
+		heap.sort();
+		cout << "result:" << endl;
+		heap.print_as_array();
+	}
+	break;
+	case KEY_EXIT:
+	{
+		cout << "Goodbye!" << endl;
+		should_exit = true;
+	}
+	break;
+	default:
+		cout << "Invalid key: " << key << endl;
+	}
 }
 
 int main(int argc, const char* argv[])
 {
-	std::vector<int> array;
-	if (argc < 2) {
-		std::cout << "Usage: " << argv[0] << " input_file" << std::endl;
-		std::cout << "where input_file containts a numbers list, each number in a line" << std::endl;
-		return 1;
+	bool is_heap_built = false;
+	bool should_exit = false;
+	MaxMinHeap heap;
+	
+	while (!should_exit) {
+		menu_loop(heap, is_heap_built, should_exit);
 	}
-
-	if (!read_file_to_vector(argv[1], array)) {
-		std::cout << "failed to read file '" << argv[1] << "', invalid file" << std::endl;
-		return 1;
-	}
-
-	MaxMinHeap heap(array);
-	std::cout << "display:" << std::endl;
-	heap.display();
-
-	//check the validitiy of the heap
-	//use a ternary operator to print the boolean value
-	std::cout << "is_valid: " << (heap.is_valid() ? "true" : "false") << std::endl;
-
-	std::cout << "maximum: " << heap.extract_max() << std::endl;
-	std::cout << "minimum: " << heap.extract_min() << std::endl;
-
-	//sort
-	std::cout << "sorting.." << std::endl;
-	heap.sort();
-	heap.print_as_array();
 
 	return 0;
 }
