@@ -55,6 +55,7 @@ int main(int argc, const char* argv[])
 	//sort
 	std::cout << "sorting.." << std::endl;
 	heap.sort();
+	heap.print_as_array();
 
 	return 0;
 }

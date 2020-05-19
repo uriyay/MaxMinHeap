@@ -1,6 +1,7 @@
 #pragma once
 
 #include <math.h>
+#include <stdint.h>
 #include <vector>
 #include <iostream>
 
@@ -10,7 +11,11 @@ private:
 	//TODO: change it to allocate a dynamic size for the array
 	//		maybe by using a template
 	std::vector<int> m_array;
-	size_t m_heap_size;
+	int m_heap_size;
+
+	void heapify_(int i, bool is_max_level);
+
+	bool is_valid_(int i);
 
 public:
 	MaxMinHeap(std::vector<int> &array);
@@ -46,26 +51,45 @@ public:
 		return depth % 2 == 0;
 	}
 
+	/*
+	Returns the maximum element and remove it from the heap
+	*/
 	int extract_max();
 
+	/*
+	Returns the minimum element and remove it from the heap
+	*/
 	int extract_min();
 
-	void heapify_(int i, bool is_max_level);
+	//insert an element to the heap
+	void heap_insert(int key);
 
+	//increase the value of element at index i to be equals to key
+	void heap_increase_key(int i, int key);
+
+	//delete an element from the heap
+	void heap_delete(int i);
+
+	//build the heap
 	void build_heap();
 
+	//fix the heap starting from index i
 	void heapify(int i);
 
+	//display the heap
 	void display();
 
-	bool is_valid_(int i);
-
-	/* checks if the heap is valid
+	/*
+	checks if the heap is valid
 	Returns: true if the heap is valid, else returns false
 	*/
 	bool is_valid();
 
+	/*
+	sort the array that is being held by the heap
+	notice that after calling this function the heap will no longer preserve its heap quality
+	*/
 	void sort();
-};
 
-typedef bool (*should_replace_func_t)(std::vector<int> &arr, size_t heap_size, int parent_index, int child_index);
+	void print_as_array();
+};

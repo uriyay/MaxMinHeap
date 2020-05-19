@@ -1,21 +1,9 @@
 #include <iostream>
 #include <string.h>
+#include <stdexcept>
+#include <limits>
 
 #include "MaxMinHeap.h"
-
-//helper methods
-bool max_should_replace(std::vector<int> &arr, size_t heap_size, int parent_index, int child_index) {
-	if ((child_index < heap_size) && (arr[child_index] > arr[parent_index]))
-		return true;
-	return false;
-}
-
-bool min_should_replace(std::vector<int> &arr, size_t heap_size, int parent_index, int child_index) {
-	if ((child_index < heap_size) && (arr[child_index] < arr[parent_index]))
-		return true;
-	return false;
-}
-//
 
 MaxMinHeap::MaxMinHeap(std::vector<int>& array) {
 	//TODO: consider using vector
@@ -58,7 +46,7 @@ void MaxMinHeap::heapify_(int i, bool is_max_level)
 	//right of left = 2(2i + 1) + 2 = 4i + 4
 	//left of right = 2(2i + 2) + 1 = 4i + 5
 	//right of right = 2(2i + 2) + 2 = 4i + 6
-	for (int i = 0; i < 4 && left_grandchild + i < m_heap_size; ++i) {
+	for (int i = 0; (i < 4) && (left_grandchild + i < m_heap_size); ++i) {
 		if ((m_array[left_grandchild + i] < m_array[node_to_replace]) ^ is_max_level) {
 			node_to_replace = left_grandchild + i;
 		}
@@ -102,19 +90,37 @@ void MaxMinHeap::display()
 }
 
 int MaxMinHeap::extract_max() {
+	if (m_heap_size < 1) {
+		throw std::underflow_error("heap underflow");
+	}
 	//The maximum is the root of the binary tree
-	return m_array[0];
+	int max = m_array[0];
+	//delete this element by moving the maximum element out of the heap
+	std::swap(m_array[0], m_array[m_heap_size - 1]);
+	m_heap_size--;
+	heapify(0);
+	return max;
 }
 
 int MaxMinHeap::extract_min() {
 	//The minimum is the minimum between the 2 childs of root
+	int minimum_index = 0;
 	int minimum = 0;
-	if (1 < m_array.size()) {
-		minimum = m_array[1];
+	if (m_heap_size < 3) {
+		throw std::underflow_error("heap underflow");
 	}
-	if ((2 < m_array.size()) && (m_array[2] < minimum)) {
-		minimum = m_array[2];
+	if (1 < m_heap_size) {
+		minimum_index = 1;
 	}
+	if ((2 < m_heap_size) && (m_array[2] < m_array[minimum_index])) {
+		minimum_index = 2;
+	}
+	minimum = m_array[minimum_index];
+	//delete this element by moving the minimum element out of the heap
+	std::swap(m_array[minimum_index], m_array[m_heap_size - 1]);
+	m_heap_size--;
+	heapify(0);
+	//return the minimum element
 	return minimum;
 }
 
@@ -129,33 +135,33 @@ bool MaxMinHeap::is_valid_(int i) {
 		int left_child = left(cur_node);
 		int right_child = left(cur_node);
 
-		if ((left_child >= m_array.size()) && (right_child >= m_array.size())) {
+		if ((left_child >= m_heap_size) && (right_child >= m_heap_size)) {
 			//its a leaf
 			continue;
 		}
 
 		if (is_on_max_level(cur_node)) {
-			if ((left_child < m_array.size()) && (m_array[cur_node] < m_array[left_child])) {
+			if ((left_child < m_heap_size) && (m_array[cur_node] < m_array[left_child])) {
 				return false;
 			}
-			if ((right_child < m_array.size()) && (m_array[cur_node] < m_array[right_child])) {
+			if ((right_child < m_heap_size) && (m_array[cur_node] < m_array[right_child])) {
 				return false;
 			}
 		}
 		else {
-			if ((left_child < m_array.size()) && (m_array[cur_node] > m_array[left_child])) {
+			if ((left_child < m_heap_size) && (m_array[cur_node] > m_array[left_child])) {
 				return false;
 			}
-			if ((right_child < m_array.size()) && (m_array[cur_node] > m_array[right_child])) {
+			if ((right_child < m_heap_size) && (m_array[cur_node] > m_array[right_child])) {
 				return false;
 			}
 		}
 
 		//add left and right
-		if (left_child < m_array.size()) {
+		if (left_child < m_heap_size) {
 			queue.insert(queue.cbegin(), left_child);
 		}
-		if (right_child < m_array.size()) {
+		if (right_child < m_heap_size) {
 			queue.insert(queue.cbegin(), right_child);
 		}
 	}
@@ -163,7 +169,7 @@ bool MaxMinHeap::is_valid_(int i) {
 }
 
 bool MaxMinHeap::is_valid() {
-	for (int i = 0; i < (int)(m_array.size() / 2); i++) {
+	for (int i = 0; i < (int)(m_heap_size / 2); i++) {
 		if (!is_valid_(i)) {
 			return false;
 		}
@@ -177,5 +183,57 @@ void MaxMinHeap::sort() {
 		std::swap(m_array[0], m_array[i]);
 		m_heap_size--;
 		heapify(0);
+	}
+}
+
+void MaxMinHeap::heap_insert(int key) {
+	m_array.push_back(std::numeric_limits<int>::min());
+	m_heap_size++;
+	//incrase from min() to key
+	heap_increase_key(m_heap_size - 1, key);
+}
+
+void MaxMinHeap::heap_increase_key(int i, int key) {
+	if (i >= m_heap_size) {
+		throw std::out_of_range("index is outside of the heap");
+	}
+	if (key < m_array[i]) {
+		throw std::runtime_error("new key is smaller than current key");
+	}
+	m_array[i] = key;
+	int parent_node = -1;
+	while (i > 0) {
+		parent_node = parent(i);
+		if (is_on_max_level(parent_node)) {
+			//parent is on a max level, check if parent is bigger than i
+			if (m_array[parent_node] >= m_array[i]) {
+				//i is in the right place, so we can stop fixing the heap
+				break;
+			}
+			//i is not in the right place, continue the loop
+		}
+		else {
+			//parent is on a min level, check if parent is less than i
+			if (m_array[parent_node] <= m_array[i]) {
+				//i is in the right place, so we can stop fixing the heap
+				break;
+			}
+			//i is not in the right place, continue the loop
+		}
+		//replace parent and i
+		std::swap(m_array[parent_node], m_array[i]);
+		//continue the loop, where the node that contains the key is at parent_node now
+		i = parent_node;
+	}
+}
+
+void MaxMinHeap::heap_delete(int i) {
+	heap_increase_key(i, std::numeric_limits<int>::max());
+	extract_max();
+}
+
+void MaxMinHeap::print_as_array() {
+	for (int i = 0; i < m_array.size(); i++) {
+		std::cout << m_array[i] << std::endl;
 	}
 }
