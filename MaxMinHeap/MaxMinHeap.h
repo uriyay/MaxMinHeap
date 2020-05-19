@@ -57,6 +57,13 @@ public:
 	void heapify(int i);
 
 	void display();
+
+	bool is_valid_(int i);
+
+	/* checks if the heap is valid
+	Returns: true if the heap is valid, else returns false
+	*/
+	bool is_valid();
 };
 
 typedef bool (*should_replace_func_t)(std::vector<int> &arr, size_t heap_size, int parent_index, int child_index);

@@ -111,3 +111,56 @@ int MaxMinHeap::extract_min() {
 	}
 	return minimum;
 }
+
+bool MaxMinHeap::is_valid_(int i) {
+	std::vector<int> queue;
+	queue.insert(queue.cbegin(), i);
+	while (queue.size() >= 1) {
+		//pop
+		int cur_node = queue[queue.size() - 1];
+		queue.pop_back();
+
+		int left_child = left(cur_node);
+		int right_child = left(cur_node);
+
+		if ((left_child >= m_array.size()) && (right_child >= m_array.size())) {
+			//its a leaf
+			continue;
+		}
+
+		if (is_on_max_level(cur_node)) {
+			if ((left_child < m_array.size()) && (m_array[cur_node] < m_array[left_child])) {
+				return false;
+			}
+			if ((right_child < m_array.size()) && (m_array[cur_node] < m_array[right_child])) {
+				return false;
+			}
+		}
+		else {
+			if ((left_child < m_array.size()) && (m_array[cur_node] > m_array[left_child])) {
+				return false;
+			}
+			if ((right_child < m_array.size()) && (m_array[cur_node] > m_array[right_child])) {
+				return false;
+			}
+		}
+
+		//add left and right
+		if (left_child < m_array.size()) {
+			queue.insert(queue.cbegin(), left_child);
+		}
+		if (right_child < m_array.size()) {
+			queue.insert(queue.cbegin(), right_child);
+		}
+	}
+	return true;
+}
+
+bool MaxMinHeap::is_valid() {
+	for (int i = 0; i < (int)(m_array.size() / 2); i++) {
+		if (!is_valid_(i)) {
+			return false;
+		}
+	}
+	return true;
+}
