@@ -64,6 +64,8 @@ public:
 	Returns: true if the heap is valid, else returns false
 	*/
 	bool is_valid();
+
+	void sort();
 };
 
 typedef bool (*should_replace_func_t)(std::vector<int> &arr, size_t heap_size, int parent_index, int child_index);

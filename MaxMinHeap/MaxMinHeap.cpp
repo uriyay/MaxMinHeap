@@ -35,15 +35,21 @@ void MaxMinHeap::build_heap()
 
 void MaxMinHeap::heapify_(int i, bool is_max_level)
 {
+	if (i >= m_array.size()) {
+		std::cout << "error: heapify() got index out of range: " << i << std::endl;
+	}
 	int node_to_replace = i;
 
 	int left_child = left(i);
 	int right_child = right(i);
 
-	if (left_child < m_array.size() && ((m_array[left_child] < m_array[node_to_replace]) ^ is_max_level))
+	//xor with is_max_level will opposite the result of the comparsion (less becomes bigger)
+	if (left_child < m_heap_size && ((m_array[left_child] < m_array[node_to_replace]) ^ is_max_level)) {
 		node_to_replace = left_child;
-	if (right_child < m_array.size() && ((m_array[right_child] < m_array[node_to_replace]) ^ is_max_level))
+	}
+	if (right_child < m_heap_size && ((m_array[right_child] < m_array[node_to_replace]) ^ is_max_level)) {
 		node_to_replace = right_child;
+	}
 
 	int left_grandchild = left(left_child);
 	//the grandchilds are sitting in sequence in the array:
@@ -52,7 +58,7 @@ void MaxMinHeap::heapify_(int i, bool is_max_level)
 	//right of left = 2(2i + 1) + 2 = 4i + 4
 	//left of right = 2(2i + 2) + 1 = 4i + 5
 	//right of right = 2(2i + 2) + 2 = 4i + 6
-	for (int i = 0; i < 4 && left_grandchild + i < m_array.size(); ++i) {
+	for (int i = 0; i < 4 && left_grandchild + i < m_heap_size; ++i) {
 		if ((m_array[left_grandchild + i] < m_array[node_to_replace]) ^ is_max_level) {
 			node_to_replace = left_grandchild + i;
 		}
@@ -163,4 +169,13 @@ bool MaxMinHeap::is_valid() {
 		}
 	}
 	return true;
+}
+
+void MaxMinHeap::sort() {
+	build_heap();
+	for (int i = m_array.size() - 1; i >= 1; i--) {
+		std::swap(m_array[0], m_array[i]);
+		m_heap_size--;
+		heapify(0);
+	}
 }

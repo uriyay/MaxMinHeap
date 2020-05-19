@@ -52,5 +52,9 @@ int main(int argc, const char* argv[])
 	std::cout << "maximum: " << heap.extract_max() << std::endl;
 	std::cout << "minimum: " << heap.extract_min() << std::endl;
 
+	//sort
+	std::cout << "sorting.." << std::endl;
+	heap.sort();
+
 	return 0;
 }
