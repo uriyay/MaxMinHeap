@@ -7,6 +7,10 @@
 
 #include "MaxMinHeap.h"
 
+#define THROW(__err_class, __err_msg) throw __err_class("error: " __err_msg \
+	", in function " \
+	__FUNCTION__ "()")
+
 bool read_file_to_vector(const char* path, std::vector<int>& array)
 {
 	std::ifstream infile(path);
@@ -41,7 +45,7 @@ MaxMinHeap::MaxMinHeap(std::vector<int>& array) {
 
 MaxMinHeap::MaxMinHeap(std::string &array_filepath) {
 	if (!read_file_to_vector(array_filepath.data(), m_array)) {
-		throw std::invalid_argument("invalid file");
+		THROW(std::invalid_argument, "invalid file");
 	}
 	m_heap_size = 0;
 
@@ -59,7 +63,7 @@ void MaxMinHeap::build_heap()
 void MaxMinHeap::heapify_(int i, bool is_max_level)
 {
 	if ((i < 0) || (i >= m_heap_size)) {
-		throw std::out_of_range("index out of range");
+		THROW(std::out_of_range, "index out of range");
 	}
 	int node_to_replace = i;
 
@@ -110,7 +114,7 @@ void MaxMinHeap::heapify_(int i, bool is_max_level)
 void MaxMinHeap::heapify(int i)
 {
 	if ((i < 0) || (i >= m_heap_size)) {
-		throw std::out_of_range("index out of range");
+		THROW(std::out_of_range, "index out of range");
 	}
 
 	if (is_on_max_level(i)) {
@@ -130,12 +134,14 @@ void MaxMinHeap::display()
 
 int MaxMinHeap::extract_max() {
 	if (m_heap_size < 1) {
-		throw std::underflow_error("heap underflow");
+		THROW(std::underflow_error, "heap underflow");
 	}
 	//The maximum is the root of the binary tree
 	int max = m_array[0];
 	//delete this element by moving the maximum element out of the heap
 	std::swap(m_array[0], m_array[m_heap_size - 1]);
+	//this will allow heap_increase_key() to override this value later
+	m_array[m_heap_size - 1] = std::numeric_limits<int>::min();
 	m_heap_size--;
 	heapify(0);
 	return max;
@@ -146,7 +152,7 @@ int MaxMinHeap::extract_min() {
 	int minimum_index = 0;
 	int minimum = 0;
 	if (m_heap_size < 3) {
-		throw std::underflow_error("heap underflow");
+		THROW(std::underflow_error, "heap underflow");
 	}
 	if (1 < m_heap_size) {
 		minimum_index = 1;
@@ -157,6 +163,8 @@ int MaxMinHeap::extract_min() {
 	minimum = m_array[minimum_index];
 	//delete this element by moving the minimum element out of the heap
 	std::swap(m_array[minimum_index], m_array[m_heap_size - 1]);
+	//this will allow heap_increase_key() to override this value later
+	m_array[m_heap_size - 1] = std::numeric_limits<int>::min();
 	m_heap_size--;
 	heapify(0);
 	//return the minimum element
@@ -165,7 +173,7 @@ int MaxMinHeap::extract_min() {
 
 bool MaxMinHeap::is_valid_(int i) {
 	if ((i < 0) || (i >= m_heap_size)) {
-		throw std::out_of_range("index out of range");
+		THROW(std::out_of_range, "index out of range");
 	}
 
 	std::vector<int> queue;
@@ -230,7 +238,11 @@ void MaxMinHeap::sort() {
 }
 
 void MaxMinHeap::heap_insert(int key) {
-	m_array.push_back(std::numeric_limits<int>::min());
+	if (m_heap_size == m_array.size()) {
+		//extend the array only if we got to the size limit of the array
+		//otherwise - we override a value there
+		m_array.push_back(std::numeric_limits<int>::min());
+	}
 	m_heap_size++;
 	//incrase from min() to key
 	heap_increase_key(m_heap_size - 1, key);
@@ -238,10 +250,10 @@ void MaxMinHeap::heap_insert(int key) {
 
 void MaxMinHeap::heap_increase_key(int i, int key) {
 	if ((i < 0) || (i >= m_heap_size)) {
-		throw std::out_of_range("index out of range");
+		THROW(std::out_of_range, "index out of range");
 	}
 	if (key < m_array[i]) {
-		throw std::runtime_error("new key is smaller than current key");
+		THROW(std::runtime_error, "new key is smaller than current key");
 	}
 	m_array[i] = key;
 	int parent_node = -1;
@@ -306,12 +318,17 @@ void MaxMinHeap::heap_increase_key(int i, int key) {
 				i = grandparent_node;
 			}
 		}
+
+		//if no replace happened - break
+		if (!should_replace) {
+			break;
+		}
 	}
 }
 
 void MaxMinHeap::heap_delete(int i) {
 	if ((i < 0) || (i >= m_heap_size)) {
-		throw std::out_of_range("index out of range");
+		THROW(std::out_of_range, "index out of range");
 	}
 	heap_increase_key(i, std::numeric_limits<int>::max());
 	extract_max();

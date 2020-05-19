@@ -139,8 +139,13 @@ int main(int argc, const char* argv[])
 	bool should_exit = false;
 	MaxMinHeap heap;
 	
-	while (!should_exit) {
-		menu_loop(heap, is_heap_built, should_exit);
+	try {
+		while (!should_exit) {
+			menu_loop(heap, is_heap_built, should_exit);
+		}
+	}
+	catch (std::runtime_error & err) {
+		cout << "Error: " << err.what() << endl;
 	}
 
 	return 0;
