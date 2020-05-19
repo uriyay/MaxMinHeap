@@ -245,28 +245,67 @@ void MaxMinHeap::heap_increase_key(int i, int key) {
 	}
 	m_array[i] = key;
 	int parent_node = -1;
+	int grandparent_node = -1;
+	bool should_replace = false;
+
 	while (i > 0) {
+		should_replace = false;
 		parent_node = parent(i);
-		if (is_on_max_level(parent_node)) {
-			//parent is on a max level, check if parent is bigger than i
-			if (m_array[parent_node] >= m_array[i]) {
-				//i is in the right place, so we can stop fixing the heap
-				break;
+		grandparent_node = parent(parent_node);
+
+		//check if we should replace between i and its parent
+		if (parent_node >= 0) {
+			should_replace = true;
+			if (is_on_max_level(parent_node)) {
+				//parent is on a max level, check if parent is bigger than i
+				if (m_array[parent_node] >= m_array[i]) {
+					//i is in the right place, so we can stop fixing the heap
+					should_replace = false;
+				}
+				//i is not in the right place, continue the loop
 			}
-			//i is not in the right place, continue the loop
-		}
-		else {
-			//parent is on a min level, check if parent is less than i
-			if (m_array[parent_node] <= m_array[i]) {
-				//i is in the right place, so we can stop fixing the heap
-				break;
+			else {
+				//parent is on a min level, check if parent is less than i
+				if (m_array[parent_node] <= m_array[i]) {
+					//i is in the right place, so we can stop fixing the heap
+					should_replace = false;
+				}
+				//i is not in the right place, continue the loop
 			}
-			//i is not in the right place, continue the loop
+			if (should_replace) {
+				//replace parent and i
+				std::swap(m_array[parent_node], m_array[i]);
+				//continue the loop, where the node that contains the key is at parent_node now
+				i = parent_node;
+			}
 		}
-		//replace parent and i
-		std::swap(m_array[parent_node], m_array[i]);
-		//continue the loop, where the node that contains the key is at parent_node now
-		i = parent_node;
+
+		//check if we should replace between i and its grandparent
+		if ((!should_replace) && (grandparent_node >= 0)) {
+			should_replace = true;
+			if (is_on_max_level(grandparent_node)) {
+				//parent is on a max level, check if parent is bigger than i
+				if (m_array[grandparent_node] >= m_array[i]) {
+					//i is in the right place, so we can stop fixing the heap
+					should_replace = false;
+				}
+				//i is not in the right place, continue the loop
+			}
+			else {
+				//parent is on a min level, check if parent is less than i
+				if (m_array[grandparent_node] <= m_array[i]) {
+					//i is in the right place, so we can stop fixing the heap
+					should_replace = false;
+				}
+				//i is not in the right place, continue the loop
+			}
+			if (should_replace) {
+				//replace parent and i
+				std::swap(m_array[grandparent_node], m_array[i]);
+				//continue the loop, where the node that contains the key is at parent_node now
+				i = grandparent_node;
+			}
+		}
 	}
 }
 

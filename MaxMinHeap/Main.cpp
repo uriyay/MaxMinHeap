@@ -18,16 +18,15 @@ const char KEY_DELETE = 'D';
 const char KEY_DISPLAY = 'P';
 const char KEY_SORT = 'S';
 const char KEY_PRINT_ARRAY = 'A';
+const char KEY_IS_VALID = 'V';
 
 //_getch
 void menu_loop(MaxMinHeap &heap, bool &is_heap_built, bool &should_exit) {
 	char key = 0;
 	cout << separetor << endl;
 	cout << "Menu" << endl << separetor << endl;
-	if (!is_heap_built) {
-		cout << "[" << KEY_BUILD << "] Build a heap from a file" << endl;
-	}
-	else {
+	cout << "[" << KEY_BUILD << "] Build a heap from a file" << endl;
+	if (is_heap_built) {
 		cout << "[" << KEY_DISPLAY << "] Display the heap" << endl;
 		cout << "[" << KEY_HEAPIFY << "] Heapify" << endl;
 		cout << "[" << KEY_INSERT << "] Insert an element to the heap" << endl;
@@ -36,6 +35,7 @@ void menu_loop(MaxMinHeap &heap, bool &is_heap_built, bool &should_exit) {
 		cout << "[" << KEY_DELETE << "] Delete an element from the heap" << endl;
 		cout << "[" << KEY_SORT << "] Sort the array contained by the heap" << endl;
 		cout << "[" << KEY_PRINT_ARRAY << "] Print the array contained by the heap" << endl;
+		cout << "[" << KEY_IS_VALID << "] Checks the validity of the heap" << endl;
 	}
 	cout << "[" << KEY_EXIT << "] Exit" << endl;
 	cout << separetor << endl;
@@ -43,6 +43,12 @@ void menu_loop(MaxMinHeap &heap, bool &is_heap_built, bool &should_exit) {
 
 	key = toupper(_getch());
 	cout << endl;
+	
+	if ((!is_heap_built) && ((key != KEY_EXIT) && (key != KEY_BUILD))) {
+		cout << "Invalid key: " << key << ", heap is not built yet" << endl;
+		return;
+	}
+
 	switch (key) {
 	case KEY_BUILD:
 	{
@@ -108,6 +114,12 @@ void menu_loop(MaxMinHeap &heap, bool &is_heap_built, bool &should_exit) {
 		heap.sort();
 		cout << "result:" << endl;
 		heap.print_as_array();
+	}
+	break;
+	case KEY_IS_VALID:
+	{
+		const char *result = heap.is_valid() ? "true" : "else";
+		cout << "is valid: " << result << endl;
 	}
 	break;
 	case KEY_EXIT:

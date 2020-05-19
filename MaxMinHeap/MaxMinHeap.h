@@ -18,28 +18,34 @@ private:
 	bool is_valid_(int i);
 
 public:
+	//Create an empty MaxMinHeap
 	MaxMinHeap() : m_heap_size(0) {}
 
+	//Create a MaxMinHeap from an array
 	MaxMinHeap(std::vector<int> &array);
 
+	/*
+	Create a MaxMinHeap from a file
+	The file should contain a list of integers numbers, separated by newline (\n)
+	*/
 	MaxMinHeap(std::string &array_filepath);
 
 	//Returns the index of the left child of i, where i is an index of a vertex in the heap
 	inline int left(int i) {
-		//2i in 0-based world = 2(i + 1) - 1
+		//2i in 0-based = 2(i + 1) - 1
 		return 2 * i + 1;
 	}
 
 	//Returns the index of the right child of i, where i is an index of a vertex in the heap
 	inline int right(int i) {
-		//2i + 1 in 0-based world = 2(i + 1) + 1 - 1
+		//2i + 1 in 0-based = 2(i + 1) + 1 - 1
 		return 2 * i + 2;
 	}
 
 	//Returns the index of the parent of i, where i is an index of a vertex in the heap
 	inline int parent(int i) {
 		//round down (i/2)
-		return (int)((i - 1) / 2);
+		return (int)(i / 2);
 	}
 
 	//returns the depth of node at index i
@@ -50,6 +56,9 @@ public:
 		return depth;
 	}
 
+	/*
+	Returns true if a node given by index i is on max level, else - returns false
+	*/
 	inline bool is_on_max_level(int i) {
 		int depth = get_depth(i);
 		return depth % 2 == 0;
@@ -95,5 +104,6 @@ public:
 	*/
 	void sort();
 
+	// Prints the array contained by MaxMinHeap
 	void print_as_array();
 };
