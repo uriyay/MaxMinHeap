@@ -23,8 +23,8 @@ void MaxMinHeap::build_heap()
 
 void MaxMinHeap::heapify_(int i, bool is_max_level)
 {
-	if (i >= m_array.size()) {
-		std::cout << "error: heapify() got index out of range: " << i << std::endl;
+	if ((i < 0) || (i >= m_heap_size)) {
+		throw std::out_of_range("index out of range");
 	}
 	int node_to_replace = i;
 
@@ -46,8 +46,8 @@ void MaxMinHeap::heapify_(int i, bool is_max_level)
 	//right of left = 2(2i + 1) + 2 = 4i + 4
 	//left of right = 2(2i + 2) + 1 = 4i + 5
 	//right of right = 2(2i + 2) + 2 = 4i + 6
-	for (int i = 0; (i < 4) && (left_grandchild + i < m_heap_size); ++i) {
-		if ((m_array[left_grandchild + i] < m_array[node_to_replace]) ^ is_max_level) {
+	for (int i = 0; (i < 4) && ((size_t)left_grandchild + i < m_heap_size); ++i) {
+		if ((m_array[(size_t)left_grandchild + i] < m_array[node_to_replace]) ^ is_max_level) {
 			node_to_replace = left_grandchild + i;
 		}
 	}
@@ -74,6 +74,10 @@ void MaxMinHeap::heapify_(int i, bool is_max_level)
 
 void MaxMinHeap::heapify(int i)
 {
+	if ((i < 0) || (i >= m_heap_size)) {
+		throw std::out_of_range("index out of range");
+	}
+
 	if (is_on_max_level(i)) {
 		heapify_(i, true);
 	}
@@ -85,7 +89,7 @@ void MaxMinHeap::heapify(int i)
 void MaxMinHeap::display()
 {
 	for (int i = 0; i < m_heap_size; i++) {
-		std::cout << i << ":" << i + 1 << ": " << m_array[i] << std::endl;
+		std::cout << i + 1 << ": " << m_array[i] << std::endl;
 	}
 }
 
@@ -125,6 +129,10 @@ int MaxMinHeap::extract_min() {
 }
 
 bool MaxMinHeap::is_valid_(int i) {
+	if ((i < 0) || (i >= m_heap_size)) {
+		throw std::out_of_range("index out of range");
+	}
+
 	std::vector<int> queue;
 	queue.insert(queue.cbegin(), i);
 	while (queue.size() >= 1) {
@@ -194,8 +202,8 @@ void MaxMinHeap::heap_insert(int key) {
 }
 
 void MaxMinHeap::heap_increase_key(int i, int key) {
-	if (i >= m_heap_size) {
-		throw std::out_of_range("index is outside of the heap");
+	if ((i < 0) || (i >= m_heap_size)) {
+		throw std::out_of_range("index out of range");
 	}
 	if (key < m_array[i]) {
 		throw std::runtime_error("new key is smaller than current key");
@@ -228,6 +236,9 @@ void MaxMinHeap::heap_increase_key(int i, int key) {
 }
 
 void MaxMinHeap::heap_delete(int i) {
+	if ((i < 0) || (i >= m_heap_size)) {
+		throw std::out_of_range("index out of range");
+	}
 	heap_increase_key(i, std::numeric_limits<int>::max());
 	extract_max();
 }

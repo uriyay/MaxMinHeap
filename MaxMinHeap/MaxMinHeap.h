@@ -11,7 +11,7 @@ private:
 	//TODO: change it to allocate a dynamic size for the array
 	//		maybe by using a template
 	std::vector<int> m_array;
-	int m_heap_size;
+	size_t m_heap_size;
 
 	void heapify_(int i, bool is_max_level);
 
